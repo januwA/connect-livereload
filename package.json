@@ -1,6 +1,6 @@
 {
   "name": "ajanuw-connect-livereload",
-  "version": "0.7.2",
+  "version": "0.8.1",
   "private": false,
   "description": "connect middleware for adding the livereload script to the response",
   "main": "./dist/cjs/index.js",
@@ -10,7 +10,10 @@
     "build:esm": "tsc --project tsconfig.esm.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
     "build:types": "tsc --project tsconfig.types.json",
-    "build": "npm run build:esm && npm run build:cjs && npm run build:types"
+    "build": "npm run build:esm && npm run build:cjs && npm run build:types",
+    "test:before": "tsc --project tsconfig.cjs.json -w",
+    "test": "nodemon ./examples/index.ts",
+    "publish": "npm run build && anpm -pub"
   },
   "keywords": [
     "livereload",
@@ -24,14 +27,13 @@
     "type": "git",
     "url": "https://github.com/januwA/connect-livereload.git"
   },
-  "engines": {
-    "node": "*"
-  },
   "dependencies": {},
   "devDependencies": {
     "@types/express": "^4.17.13",
+    "@types/livereload": "^0.9.1",
     "@types/node": "^16.4.3",
-    "express": "~4.17.1",
+    "express": "^4.17.1",
+    "livereload": "^0.9.3",
     "typescript": "^4.3.5"
   }
 }

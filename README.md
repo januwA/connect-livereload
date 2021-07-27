@@ -4,12 +4,14 @@ ajanuw-connect-livereload
 
 ## Branch from [connect-livereload](https://github.com/intesso/connect-livereload)
 
-> Some codes have been modified, and some changes have taken place in the configuration. For details, please see `src/index.ts`
+> Some codes have been modified, and some changes have taken place in the configuration. For details, please see `src/index.ts` or `examples/index.ts`
 
 ## install
 ```
 $ npm install ajanuw-connect-livereload --save-dev
 ```
+
+---
 
 
 connect middleware for adding the livereload script to the response.

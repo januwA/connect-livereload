@@ -34,9 +34,9 @@ export interface Options {
   hostname?: string;
 
   /**
-   * 
+   *
    * livereload server port
-   * 
+   *
    * defautl: 35729
    */
   port?: number;
@@ -160,18 +160,18 @@ export function connectLivereload(opt: Options = {}) {
     });
   };
 
-  let isBusy = false;
-
   // 返回中间件
   return function livereload(
     req: express.Request,
     res: express.Response,
     next: NextFunction
   ) {
-    if (isBusy || req.method !== "GET") return next();
-    isBusy = true;
+    // 每次请求都要注入js
+    if ((res as any)._ishook) return next();
+    (res as any)._ishook = true;
 
     const host = opt?.hostname ?? req.hostname;
+
     // 默认只处理html
     if (
       !acceptIncludesHtml(req) ||
@@ -180,7 +180,6 @@ export function connectLivereload(opt: Options = {}) {
     ) {
       return next();
     }
-
     let needInject = true;
     const res_write = res.write.bind(res);
     const res_end = res.end.bind(res);
@@ -189,10 +188,13 @@ export function connectLivereload(opt: Options = {}) {
       push.prototype.data = (push.prototype.data ?? "") + chunk;
     }
 
-    (res as any).write = (chunk: string | Buffer, encoding: BufferEncoding) => {
+    (res as any).write = (
+      chunk: string | Buffer | undefined,
+      encoding: BufferEncoding
+    ) => {
       if (!needInject) return res_write(chunk, encoding);
 
-      if (chunk !== undefined) {
+      if (chunk) {
         const _chunk: string =
           chunk instanceof Buffer ? chunk.toString(encoding) : chunk;
 
@@ -228,7 +230,6 @@ export function connectLivereload(opt: Options = {}) {
       res_end(push.prototype.data, encoding);
     };
 
-    isBusy = false;
     next();
   };
 }

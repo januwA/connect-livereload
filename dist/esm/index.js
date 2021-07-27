@@ -83,12 +83,12 @@ export function connectLivereload(opt = {}) {
                 (typeof item === "string" && str.includes(item)));
         });
     };
-    let isBusy = false;
     // 返回中间件
     return function livereload(req, res, next) {
-        if (isBusy || req.method !== "GET")
+        // 每次请求都要注入js
+        if (res._ishook)
             return next();
-        isBusy = true;
+        res._ishook = true;
         const host = opt?.hostname ?? req.hostname;
         // 默认只处理html
         if (!acceptIncludesHtml(req) ||
@@ -105,7 +105,7 @@ export function connectLivereload(opt = {}) {
         res.write = (chunk, encoding) => {
             if (!needInject)
                 return res_write(chunk, encoding);
-            if (chunk !== undefined) {
+            if (chunk) {
                 const _chunk = chunk instanceof Buffer ? chunk.toString(encoding) : chunk;
                 // 为此块注入 livereload.js
                 if (!hasIncludesLivereloadJS(push.prototype.data)) {
@@ -133,7 +133,6 @@ export function connectLivereload(opt = {}) {
             }
             res_end(push.prototype.data, encoding);
         };
-        isBusy = false;
         next();
     };
 }

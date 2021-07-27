@@ -3,6 +3,11 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
+    "rootDir": "./src/",
     "outDir": "./dist/cjs/",
   },
+  "exclude": [
+    "examples",
+    "dist",
+  ]
 }
