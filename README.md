@@ -1,6 +1,12 @@
 
 connect-livereload
 ==================
+
+## Branch from [connect-livereload](git://github.com/intesso/connect-livereload)
+
+> Some codes have been modified, and some changes have taken place in the configuration. For details, please see `src/index.ts`
+
+
 connect middleware for adding the livereload script to the response.
 no browser plugin is needed.
 if you are happy with a browser plugin, then you don't need this middleware.
