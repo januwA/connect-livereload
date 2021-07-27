@@ -1,6 +1,6 @@
 {
   "name": "ajanuw-connect-livereload",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "private": false,
   "description": "connect middleware for adding the livereload script to the response",
   "main": "./dist/cjs/index.js",
