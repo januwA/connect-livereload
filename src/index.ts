@@ -56,9 +56,15 @@ export interface Options {
    * What scripts do you need to inject?
    */
   plugins?: string[];
+
+  /**
+   * default: request.protocol
+   */
+  protocol?: string;
 }
 
-export function connectLivereload(opt: Options = {}) {
+export function connectLivereload(opt?: Options) {
+  opt = opt ?? {};
   // 不会被链接的请求
   const ignore = opt.ignore || [
     /\.js(\?.*)?$/,
@@ -82,6 +88,8 @@ export function connectLivereload(opt: Options = {}) {
   const handeScript =
     opt.handeScript ??
     ((src) => `<script src="${src}" async="" defer=""></script>`);
+
+  const getProtocol = (req: express.Request) => opt?.protocol ?? req.protocol;
 
   const include = opt.include || [/.*/];
 
@@ -171,6 +179,7 @@ export function connectLivereload(opt: Options = {}) {
     (res as any)._ishook = true;
 
     const host = opt?.hostname ?? req.hostname;
+    const protocol = getProtocol(req);
 
     // 默认只处理html
     if (
@@ -200,7 +209,7 @@ export function connectLivereload(opt: Options = {}) {
 
         // 为此块注入 livereload.js
         if (!hasIncludesLivereloadJS(push.prototype.data)) {
-          push(injectLivereloadJS(_chunk, req.protocol, host));
+          push(injectLivereloadJS(_chunk, protocol, host));
         } else {
           push(_chunk);
         }
@@ -218,7 +227,7 @@ export function connectLivereload(opt: Options = {}) {
       // 在对所有数据进行一次检擦
       const htmlData: string = push.prototype.data;
       if (isHtmlText(htmlData) && !hasIncludesLivereloadJS(htmlData)) {
-        push.prototype.data = injectLivereloadJS(htmlData, req.protocol, host);
+        push.prototype.data = injectLivereloadJS(htmlData, protocol, host);
       }
 
       if (push.prototype.data !== undefined) {

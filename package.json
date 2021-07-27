@@ -1,6 +1,6 @@
 {
   "name": "ajanuw-connect-livereload",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "private": false,
   "description": "connect middleware for adding the livereload script to the response",
   "main": "./dist/cjs/index.js",
@@ -12,8 +12,7 @@
     "build:types": "tsc --project tsconfig.types.json",
     "build": "npm run build:esm && npm run build:cjs && npm run build:types",
     "test:before": "tsc --project tsconfig.cjs.json -w",
-    "test": "nodemon ./examples/index.ts",
-    "publish": "npm run build && anpm -pub"
+    "test": "nodemon ./examples/index.ts"
   },
   "keywords": [
     "livereload",

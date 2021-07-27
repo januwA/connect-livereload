@@ -45,6 +45,10 @@ export interface Options {
      * What scripts do you need to inject?
      */
     plugins?: string[];
+    /**
+     * default: request.protocol
+     */
+    protocol?: string;
 }
 export declare function connectLivereload(opt?: Options): (req: express.Request, res: express.Response, next: NextFunction) => void;
 //# sourceMappingURL=index.d.ts.map

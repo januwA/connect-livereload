@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectLivereload = void 0;
-function connectLivereload(opt = {}) {
+function connectLivereload(opt) {
     var _a, _b, _c, _d, _e;
+    opt = opt !== null && opt !== void 0 ? opt : {};
     // 不会被链接的请求
     const ignore = opt.ignore || [
         /\.js(\?.*)?$/,
@@ -19,6 +20,7 @@ function connectLivereload(opt = {}) {
     ];
     const handleSrc = (_a = opt.handleSrc) !== null && _a !== void 0 ? _a : ((protocol, host, port) => `${protocol}://${host}:${port}/livereload.js?snipver=1`);
     const handeScript = (_b = opt.handeScript) !== null && _b !== void 0 ? _b : ((src) => `<script src="${src}" async="" defer=""></script>`);
+    const getProtocol = (req) => { var _a; return (_a = opt === null || opt === void 0 ? void 0 : opt.protocol) !== null && _a !== void 0 ? _a : req.protocol; };
     const include = opt.include || [/.*/];
     const isHtmlText = (_c = opt.html) !== null && _c !== void 0 ? _c : ((str) => (str ? /<[:_-\w\s\!\/\=\"\']+>/i.test(str) : false));
     const prepend = (w, scripts) => scripts + w;
@@ -92,6 +94,7 @@ function connectLivereload(opt = {}) {
             return next();
         res._ishook = true;
         const host = (_a = opt === null || opt === void 0 ? void 0 : opt.hostname) !== null && _a !== void 0 ? _a : req.hostname;
+        const protocol = getProtocol(req);
         // 默认只处理html
         if (!acceptIncludesHtml(req) ||
             !isIgnore(req.url, include) ||
@@ -112,7 +115,7 @@ function connectLivereload(opt = {}) {
                 const _chunk = chunk instanceof Buffer ? chunk.toString(encoding) : chunk;
                 // 为此块注入 livereload.js
                 if (!hasIncludesLivereloadJS(push.prototype.data)) {
-                    push(injectLivereloadJS(_chunk, req.protocol, host));
+                    push(injectLivereloadJS(_chunk, protocol, host));
                 }
                 else {
                     push(_chunk);
@@ -129,7 +132,7 @@ function connectLivereload(opt = {}) {
             // 在对所有数据进行一次检擦
             const htmlData = push.prototype.data;
             if (isHtmlText(htmlData) && !hasIncludesLivereloadJS(htmlData)) {
-                push.prototype.data = injectLivereloadJS(htmlData, req.protocol, host);
+                push.prototype.data = injectLivereloadJS(htmlData, protocol, host);
             }
             if (push.prototype.data !== undefined) {
                 res.setHeader("content-length", Buffer.byteLength(push.prototype.data, encoding));
